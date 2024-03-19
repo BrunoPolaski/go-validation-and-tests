@@ -1,12 +1,14 @@
 package main
 
 import (
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/BrunoPolaski/go-gin-api/controllers"
 	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/assert"
 )
 
 func RouteTestingSetup() *gin.Engine {
@@ -20,7 +22,8 @@ func TestWelcomeStatusCode(t *testing.T) {
 	req, _ := http.NewRequest("GET", "/Bruno", nil)
 	response := httptest.NewRecorder()
 	r.ServeHTTP(response, req)
-	if response.Code != http.StatusOK {
-		t.Fatalf("Status error: received value was %d, must be %d", response.Code, http.StatusOK)
-	}
+	assert.Equal(t, http.StatusOK, response.Code, "should be equal")
+	responseMock := `{"API diz: ":"E aí Bruno"}`
+	responseBody, _ := io.ReadAll(response.Body)
+	assert.Equal(t, responseMock, string(responseBody), "not equal")
 }
