@@ -8,12 +8,30 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// GetStudents godoc
+// @Summary      Show all students in the database
+// @Description  Get all students
+// @Tags         students
+// @Accept       json
+// @Produce      json
+// @Param        id path int true "Student ID"
+// @Success      200  {object}  models.Student
+// @Router       /students [get]
 func GetStudents(c *gin.Context) {
 	var students []models.Student
 	database.DB.Find(&students)
 	c.JSON(200, students)
 }
 
+// Welcome godoc
+// @Summary      Show a nice welcome message with the name provided
+// @Description  Get all students
+// @Tags         name
+// @Accept       json
+// @Produce      json
+// @Param        name path string true "Name"
+// @Success      200  {object}  models.Student
+// @Router       /{name} [get]
 func Welcome(c *gin.Context) {
 	name := c.Params.ByName("name")
 	c.JSON(200, gin.H{
@@ -21,6 +39,15 @@ func Welcome(c *gin.Context) {
 	})
 }
 
+// CreateStudent godoc
+// @Summary      Create a new student
+// @Description  Create a new student
+// @Tags         students
+// @Accept       json
+// @Produce      json
+// @Param        id path int true "Student ID"
+// @Success      200  {object}  models.Student
+// @Router       /students [post]
 func CreateStudent(c *gin.Context) {
 	var student models.Student
 	if err := c.ShouldBindJSON(&student); err != nil {
@@ -33,6 +60,15 @@ func CreateStudent(c *gin.Context) {
 	c.JSON(http.StatusOK, student)
 }
 
+// GetStudentById	godoc
+// @Summary      Show a student by ID
+// @Description  Get a student by ID
+// @Tags         students
+// @Accept       json
+// @Produce      json
+// @Param        id path int true "Student ID"
+// @Success      200  {object}  models.Student
+// @Router       /students/{id} [get]
 func GetStudentById(c *gin.Context) {
 	id := c.Params.ByName("id")
 	var student models.Student
@@ -84,4 +120,16 @@ func SearchStudentByCpf(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, student)
+}
+
+func DisplayIndexPage(c *gin.Context) {
+	var students []models.Student
+	database.DB.Find(&students)
+	c.HTML(http.StatusOK, "index.html", gin.H{
+		"students": students,
+	})
+}
+
+func DisplayNotFound(c *gin.Context) {
+	c.HTML(http.StatusNotFound, "404.html", gin.H{})
 }
